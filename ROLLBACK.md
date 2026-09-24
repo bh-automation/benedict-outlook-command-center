@@ -1,20 +1,23 @@
 # ROLLBACK
 
 ## Add-in entfernen (sofort, vollständig)
-1. Outlook (neu oder Web) → **Apps** bzw. **Add-Ins abrufen** → **Meine Add-Ins**.
+1. Outlook (neu oder Web) → **Apps** → **Add-Ins abrufen** → **Meine Add-Ins**.
 2. Unter „Benutzerdefinierte Add-Ins“ bei **Precision Workspace** auf **…** → **Entfernen**.
-3. Outlook neu starten. Der Menüband-Knopf „Precision Workspace“ ist weg.
+3. Der Eintrag „Precision Workspace“ unter **Apps** ist weg. Nachrichten, Ordner und Signatur bleiben unverändert.
+
+## Auf einen früheren Stand zurück
+- **Nur Code (`site/`):** im Repository den früheren Commit bzw. Tag wiederherstellen (Datei-Stand hochladen oder Revert) → Pages veröffentlicht automatisch neu.
+- **Manifest:** frühere `manifest.production.xml` aus dem Tag/Commit laden → Add-in entfernen → aus Datei neu installieren.
 
 ## Kategorien
-- Gesetzte Kategorien bleiben an den Nachrichten; sie sind normale Outlook-Kategorien.
-- Entfernen: Nachricht markieren → Kategorisieren → Häkchen entfernen, oder die Kategorie unter Einstellungen → Konten → Kategorien löschen/umbenennen.
+- Gesetzte Kategorien bleiben an den Nachrichten; es sind normale Outlook-Kategorien.
+- Entfernen: Nachricht markieren → Kategorisieren → Häkchen entfernen. Die Kategorie selbst unter Einstellungen → Konten → Kategorien löschen/umbenennen.
 
 ## Veröffentlichung zurücknehmen
-- GitHub → Repository → Settings → Pages → Veröffentlichung abschalten, oder das Repository archivieren/löschen.
-- Ein früherer Stand: Tag auswählen und `Pages`-Workflow über „Run workflow“ auf diesem Stand ausführen.
+- GitHub → Repository → Settings → Pages → Veröffentlichung abschalten, oder das Repository archivieren.
 
-## Signatur prüfen
-Das Add-in liest und schreibt keine Signaturen. Prüfung: neue Mail öffnen → die Standardsignatur erscheint unverändert, Icon animiert.
+## Signatur
+Das Add-in liest und schreibt keine Signaturen und ist beim Verfassen nicht aktiv (Regel: nur Nachrichten im Lesemodus). Prüfung: neue Mail → Standardsignatur erscheint unverändert, Icon animiert.
 
 ## Lokaler Entwicklungs-Host
 Nicht verwendet (kein localhost, kein Entwicklerzertifikat) – nichts zu entfernen.

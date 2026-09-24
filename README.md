@@ -30,14 +30,16 @@ tools/validate_repo.py    Harte Prüfungen (VALIDATION PASS nötig)
 tools/set_owner.py        GitHub-Benutzer ins Manifest eintragen
 tools/make_icons.py       Icons erzeugen
 .github/workflows/        Pages, Validate, CodeQL (Actions auf Commit-SHA gepinnt)
-docs/                     Härtung, Red Team, Installation
+tests/e2e/                E2E-Tests (Playwright) mit Office.js-Attrappe
+docs/                     Härtung, Red Team, Installation, Recherche, Plattform
 ```
 
 ## Prüfen
 ```
 python3 tools/validate_repo.py
 node --test tests/logic.test.js
+python3 tests/e2e/run_e2e.py     # Playwright, Office.js-Attrappe mit fiktiven Daten
 ```
 
 ## Installation in Outlook
-Siehe `docs/INSTALL-OUTLOOK.md`. Entfernen: `ROLLBACK.md`.
+Siehe `docs/INSTALL-OUTLOOK.md`. Entfernen: `ROLLBACK.md`. Änderungen: `CHANGELOG.md`.

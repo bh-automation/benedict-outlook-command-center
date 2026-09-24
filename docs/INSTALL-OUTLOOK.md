@@ -1,12 +1,20 @@
 # Installation in Outlook (Sideload)
 
-Voraussetzungen: Die Seite `https://<user>.github.io/benedict-outlook-command-center/taskpane.html` lädt, und die Kategorien ACTION, WAITING, PROJECT, DONE, REFERENCE existieren in Outlook.
+Voraussetzungen:
+- `https://bh-automation.github.io/benedict-outlook-command-center/taskpane.html` lädt.
+- Die Kategorien ACTION, WAITING, PROJECT, DONE, REFERENCE existieren in Outlook (Einstellungen → Konten → Kategorien). Office.js kann nur vorhandene Kategorien setzen.
 
-1. Neues Outlook: eine Mail markieren → Menüband **Weitere Apps** → **Add-ins abrufen**.
-2. **Meine Add-Ins** → Abschnitt **Benutzerdefinierte Add-Ins** → **Benutzerdefiniertes Add-In hinzufügen** →
-   **Von URL hinzufügen…** `https://bh-automation.github.io/benedict-outlook-command-center/manifest.xml`
-   oder **Aus Datei hinzufügen…** `manifest.production.xml`.
-3. Warnhinweis lesen → **Installieren**.
-4. Eine empfangene Mail öffnen → Menüband bzw. „…“ → **Precision Workspace**.
+## Installieren (neues Outlook für Windows, getestet 24.09.2026)
+1. `manifest.xml` herunterladen: `https://bh-automation.github.io/benedict-outlook-command-center/manifest.xml` (oder `manifest.production.xml` aus dem Repository).
+2. Eine Mail markieren → Menüband **Apps** bzw. **Weitere Apps** → **Add-Ins abrufen**.
+3. **Meine Add-Ins** → **Benutzerdefinierte Add-Ins** → **Benutzerdefiniertes Add-In hinzufügen** → **Aus Datei hinzufügen…** → `manifest.xml` wählen.
+   - Falls der Dateidialog nur minimiert in der Taskleiste erscheint: auf den Eintrag klicken, dann über die Titelleiste **Maximieren**.
+   - „Von URL hinzufügen“ war im Test nicht nutzbar; „Aus Datei“ funktioniert.
+4. Warnhinweis lesen (Standardhinweis für benutzerdefinierte Add-Ins) → **Installieren**.
+5. Eine empfangene Mail öffnen → **Apps** → **Precision Workspace**. Der Bereich öffnet sich rechts.
 
-Hinweis: Bei privaten Outlook.com-Konten lässt sich der Bereich nicht anheften (Microsoft: Pinning nicht für Outlook.com). Er schließt sich beim Wechsel der Nachricht.
+## Aktualisieren (neue Manifest-Version)
+Outlook übernimmt Manifest-Änderungen nicht automatisch: Add-In entfernen (siehe `ROLLBACK.md`) und die neue `manifest.xml` wie oben **aus Datei** installieren. Code-Änderungen in `site/` wirken ohne Neuinstallation, sobald Pages neu veröffentlicht hat.
+
+## Nachrichtenwechsel
+Das Manifest fordert einen anheftbaren Bereich an (`SupportsPinning`). Dann meldet Outlook jeden Nachrichtenwechsel (`ItemChanged`) und der Bereich zeigt die neue Nachricht. Microsoft nennt Pinning für Outlook.com-Konten als nicht verfügbar; ob das neue Outlook den Wechsel trotzdem meldet, ist in der Plattform-Matrix dokumentiert. Ohne Meldung gilt: Der Bereich zeigt und bearbeitet immer die im Kopf genannte Nachricht – bei Bedarf neu öffnen.

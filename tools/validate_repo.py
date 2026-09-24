@@ -31,12 +31,14 @@ NS = {
     "o": "http://schemas.microsoft.com/office/appforoffice/1.1",
     "bt": "http://schemas.microsoft.com/office/officeappbasictypes/1.0",
     "v": "http://schemas.microsoft.com/office/mailappversionoverrides",
+    "v11": "http://schemas.microsoft.com/office/mailappversionoverrides/1.1",
 }
+XSI_TYPE = "{http://www.w3.org/2001/XMLSchema-instance}type"
 REQUIRED_FILES = [
     "manifest.production.xml", "README.md", "SECURITY.md", "PERMISSIONS.md", "PERFORMANCE.md",
     "ROLLBACK.md", "CHANGELOG.md", "docs/GITHUB-HARDENING.md", "docs/REDTEAM-GITHUB.md",
     "site/taskpane.html", "site/taskpane.css", "site/taskpane.js", "site/logic.js",
-    "site/commands.html", "site/commands.js", "site/support.html",
+    "site/commands.html", "site/commands.js", "site/support.html", "site/index.html",
     ".github/workflows/pages.yml", ".github/workflows/codeql.yml", ".github/workflows/validate.yml",
     ".github/dependabot.yml",
 ]
@@ -119,6 +121,36 @@ def check_manifest(allow_placeholder: bool) -> None:
                 fail(f"{name}: {w}×{h} statt {size}×{size}")
         else:
             fail(f"Icon fehlt: assets/{name}")
+
+    # VersionOverrides: V1_0 außen, V1_1 innen (Pflicht für SupportsPinning), Pinning aktiv
+    outer = root.find("v:VersionOverrides", NS)
+    if outer is None or outer.attrib.get(XSI_TYPE) != "VersionOverridesV1_0":
+        fail("VersionOverridesV1_0 fehlt als äußeres Element")
+    else:
+        inner = outer.find("v11:VersionOverrides", NS)
+        if inner is None or inner.attrib.get(XSI_TYPE) != "VersionOverridesV1_1":
+            fail("VersionOverridesV1_1 fehlt (innerhalb von V1_0)")
+        else:
+            pins = [e.text for e in inner.iter(f"{{{NS['v11']}}}SupportsPinning")]
+            if pins != ["true"]:
+                fail(f"SupportsPinning muss genau einmal true sein, gefunden: {pins}")
+            sets = inner.find("v11:Requirements/bt:Sets", NS)
+            if sets is None or sets.attrib.get("DefaultMinVersion") != "1.5":
+                fail("V1_1 Requirements: Mailbox DefaultMinVersion 1.5 erwartet (ItemChanged)")
+            # Jede resid muss in Resources definiert sein
+            ids = {e.attrib["id"] for e in inner.iter() if "id" in e.attrib and e.tag.startswith("{" + NS["bt"])}
+            for e in inner.iter():
+                rid = e.attrib.get("resid")
+                if rid and rid not in ids:
+                    fail(f"resid ohne Ressource: {rid}")
+            # Aufgabenbereich-URL (Menüband) == SourceLocation (FormSettings)
+            tp = [e.attrib.get("DefaultValue") for e in inner.iter(f"{{{NS['bt']}}}Url") if e.attrib.get("id") == "Taskpane.Url"]
+            src = root.find("o:FormSettings/o:Form/o:DesktopSettings/o:SourceLocation", NS)
+            if not tp or src is None or tp[0] != src.attrib.get("DefaultValue"):
+                fail("Taskpane.Url und FormSettings/SourceLocation weichen voneinander ab")
+            ctx = [e.attrib.get(XSI_TYPE) for e in inner.iter(f"{{{NS['v11']}}}ExtensionPoint")]
+            if ctx != ["MessageReadCommandSurface"]:
+                fail(f"Nur MessageReadCommandSurface erlaubt, gefunden: {ctx}")
 
     # Regel: nur Nachrichten im Lesemodus
     rules = [r.attrib for r in root.iter(f"{{{NS['o']}}}Rule") if r.attrib.get("ItemType")]

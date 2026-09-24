@@ -9,6 +9,8 @@
   var els = {};
   var current = [];
   var busy = false;
+  var loading = false;   /* Kategorien der gerade gewählten Nachricht noch nicht geladen */
+  var shownItem = null;
   var canWrite = false;
 
   function $(id) { return document.getElementById(id); }
@@ -77,7 +79,7 @@
       b.setAttribute("aria-pressed", s === active ? "true" : "false");
       /* Während einer Aktion nicht „disabled“ setzen, sonst verliert die Tastatur den Fokus. */
       b.disabled = !canWrite;
-      b.setAttribute("aria-disabled", busy ? "true" : "false");
+      b.setAttribute("aria-disabled", busy || loading ? "true" : "false");
     });
   }
 
@@ -106,10 +108,12 @@
     });
   }
 
-  function call(method, list) {
+  /* item wird beim Klick festgehalten: Wechselt die Nachricht während der Aktion (angehefteter Bereich),
+     landen Hinzufügen und Entfernen trotzdem an derselben Nachricht. */
+  function call(item, method, list) {
     return new Promise(function (resolve, reject) {
       if (!list.length) { resolve(); return; }
-      mailbox().item.categories[method](list, function (r) {
+      item.categories[method](list, function (r) {
         if (r.status === Office.AsyncResultStatus.Succeeded) resolve();
         else reject(r.error || { name: "Unknown", message: "Unbekannter Fehler" });
       });
@@ -119,6 +123,8 @@
   function refresh() {
     var item = mailbox() && mailbox().item;
     if (!item) {
+      shownItem = null;
+      loading = false;
       els.from.textContent = "Keine Nachricht ausgewählt";
       els.subject.textContent = "–";
       current = [];
@@ -127,36 +133,54 @@
       return Promise.resolve();
     }
     showItemHeader(item);
-    return loadCategories().then(function (cats) { current = cats; render(); });
+    if (shownItem !== item) {
+      /* Neue Nachricht: alten Status sofort ausblenden und Aktionen bis zum Laden sperren. */
+      shownItem = item;
+      current = [];
+      loading = true;
+      render();
+    }
+    /* Späte Antwort einer vorherigen Nachricht verwerfen (schneller Wechsel im angehefteten Bereich). */
+    return loadCategories().then(function (cats) {
+      if (mailbox().item !== item) return;
+      loading = false;
+      current = cats;
+      render();
+    });
   }
 
   function onAction(ev) {
     var btn = ev.currentTarget;
     var target = btn.getAttribute("data-status");
-    if (busy || !canWrite) return;
+    if (busy || loading || !canWrite) return;
+    var item = mailbox() && mailbox().item;
+    if (!item || !item.categories) return;
     var p = L.plan(current, target);
     busy = true;
     btn.setAttribute("aria-busy", "true");
     render();
     setStatus("");
-    /* Erst hinzufügen, dann alte Status entfernen: Schlägt das Hinzufügen fehl, bleibt alles unverändert. */
-    call("addAsync", p.add)
-      .then(function () { return call("removeAsync", p.remove); })
+    /* Erst hinzufügen, dann alte Status entfernen: Schlägt das Hinzufügen fehl, bleibt alles unverändert.
+       Die Meldung erscheint erst, wenn die Anzeige den neuen Stand zeigt. */
+    var msg = "", isError = false;
+    call(item, "addAsync", p.add)
+      .then(function () { return call(item, "removeAsync", p.remove); })
       .then(function () {
-        setStatus(p.result === "set" ? target + " gesetzt." : target + " entfernt.");
+        msg = (p.result === "set" ? target + " gesetzt" : target + " entfernt") +
+          (mailbox().item === item ? "." : " (an der zuvor geöffneten Nachricht).");
       })
       .catch(function (err) {
-        if (err && err.name === "InvalidCategory") {
-          setStatus("Kategorie „" + target + "“ fehlt in Outlook. Bitte in Outlook unter Kategorien anlegen.", true);
-        } else {
-          setStatus("Aktion fehlgeschlagen: " + ((err && err.message) || "unbekannt"), true);
-        }
+        isError = true;
+        msg = err && err.name === "InvalidCategory"
+          ? "Kategorie „" + target + "“ fehlt in Outlook. Bitte in Outlook unter Kategorien anlegen."
+          : "Aktion fehlgeschlagen: " + ((err && err.message) || "unbekannt");
       })
       .then(function () {
         busy = false;
         btn.removeAttribute("aria-busy");
         return refresh();
-      });
+      })
+      .then(function () { setStatus(msg, isError); });
   }
 
   function initOffice() {
@@ -170,6 +194,7 @@
     if (Office.context.requirements.isSetSupported("Mailbox", "1.5")) {
       mailbox().addHandlerAsync(Office.EventType.ItemChanged, function () {
         canWrite = !!supported;
+        if (!busy) setStatus("");
         refresh();
       });
     }
