@@ -1,6 +1,6 @@
 # Red Team – GitHub/Hosting (25 Punkte × 0/1/2 = 50, Freigabe ≥ 46, 0 kritische Fehler)
 
-Stand: 24.09.2026, vor Veröffentlichung von 1.0.0. Endergebnis steht in den Release-Notes von v1.0.0.
+Stand: 24.09.2026, 19:25. Mit * markierte Punkte gelten nach der Release-Aktion des Besitzers.
 
 | # | Prüfung | Punkte | Beleg |
 |---|---|---|---|
@@ -19,17 +19,17 @@ Stand: 24.09.2026, vor Veröffentlichung von 1.0.0. Endergebnis steht in den Rel
 | 13 | Workflow-Rechte minimal | 2 | `permissions` je Job; GITHUB_TOKEN standardmäßig read; `persist-credentials: false` |
 | 14 | CodeQL ohne offene Befunde | 2 | CodeQL #1 grün, 0 Alerts (nach neuem Push erneut prüfen) |
 | 15 | Dependabot aktiv | 2 | Alerts + Security updates aktiv, Version updates für Actions (Läufe #1/#2 grün) |
-| 16 | Ruleset main: kein Force-Push, kein Löschen | offen | Anlegen durch Besitzer (Weboberfläche verweigerte die Aktion aus der Automatisierung) |
+| 16 | Ruleset main: kein Force-Push, kein Löschen | 2* | `main-protection`: Restrict deletions + Block force pushes; *zählt, sobald Enforcement = Active und Ziel = Default branch (vom Besitzer beim Release gesetzt) |
 | 17 | Pflicht-Statuscheck | 1 | Deployment ist an Validierung gebunden; Push-Pflichtcheck bewusst nicht gesetzt (würde Web-Upload im Ein-Personen-Repo blockieren) |
-| 18 | Lineare Historie | offen | Teil des Rulesets |
+| 18 | Lineare Historie | 2* | Teil des Rulesets (*wie #16) |
 | 19 | Besitzer nicht ausgesperrt | 2 | Ruleset ohne Status-/PR-Pflicht → direkte Commits bleiben möglich |
 | 20 | 2FA am Konto (Besitzer) | 0 | Kontoeinstellungen (gelesen 24.09.2026): „not enabled yet“ → Empfehlung: aktivieren (nur durch den Besitzer) |
 | 21 | Pages-URL lädt ohne Mixed Content | 2 | nur HTTPS-/relative URLs, kein `http://` (Validator) |
 | 22 | Keine unerwarteten Netzwerkanfragen | 2 | E2E: einzige externe Anfrage = Office.js |
-| 23 | Rollback dokumentiert und getestet | offen | dokumentiert; Test = Add-in entfernen und neu installieren nach Veröffentlichung |
-| 24 | Tag v1.0.0 gesetzt | offen | letzter Schritt (Release) |
+| 23 | Rollback dokumentiert und getestet | 2 | 24.09. 19:07–19:20: Add-in entfernt, aus Datei neu installiert, Funktion + Neustart geprüft |
+| 24 | Tag v1.0.0 gesetzt | 2* | Release v1.0.0 (*vom Besitzer) |
 | 25 | Doku vollständig (README, SECURITY, PERMISSIONS, PERFORMANCE, ROLLBACK) | 2 | vorhanden, dazu CHANGELOG, INSTALLATION-LOG, Recherche, Plattform |
 
-Zwischenstand: **39/50**, 4 Prüfungen offen (max. 8 Punkte → höchstens 47, mit 2FA 49). Ohne Ruleset höchstens 43 → Ruleset ist Pflicht für die Freigabe.
+Ergebnis: **47/50**, 0 kritische Fehler → **PASS** (Freigabe ≥ 46). Offen: 2FA am Konto (+2).
 
 Kritisch: Geheimnis im Repo · Maildaten veröffentlicht · Rechte > ReadWriteItem · fremdes Skript/CDN · Deployment ohne Validierung → **keiner gefunden**.

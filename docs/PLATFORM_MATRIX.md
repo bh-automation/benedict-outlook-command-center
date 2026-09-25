@@ -51,3 +51,8 @@ ADVANCED PACK ACCESS = PASS  (alle Dateien gelesen)
 ## Nachtrag 24.09.2026, 16:36–16:41 (live)
 - Kategorien angelegt: ACTION (Rot), WAITING (Orange), PROJECT (Blau), DONE (Grün), REFERENCE (Blaugrün), CAREER (Lila), FINANCE (Gelb), PRIVATE (Grau). ACTION und WAITING sind als Favoriten im Ordnerbereich.
 - Sideloading verfügbar (aus Datei oder URL) → **Route B** (normaler Aufgabenbereich, 1 Menüband-Befehl).
+
+## Nachtrag 24.09.2026, 19:07–19:25 (Realtest v1.0.0)
+- Manifest V1_0 + V1_1 mit `SupportsPinning` „Aus Datei“ installiert: angenommen („Von URL“ ausgegraut).
+- Nachrichtenwechsel mit offenem Bereich: **kein `ItemChanged`** → Pinning auf Outlook.com bestätigt nicht verfügbar. Bereich zeigt weiter die Ausgangsnachricht; Aktionen treffen nur diese.
+- Neu öffnen auf anderer Nachricht: zeigt die neue Nachricht. Nach Outlook-Neustart: Add-in vorhanden und funktionsfähig.

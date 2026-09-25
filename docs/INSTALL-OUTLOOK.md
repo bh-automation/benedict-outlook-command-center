@@ -17,4 +17,5 @@ Voraussetzungen:
 Outlook übernimmt Manifest-Änderungen nicht automatisch: Add-In entfernen (siehe `ROLLBACK.md`) und die neue `manifest.xml` wie oben **aus Datei** installieren. Code-Änderungen in `site/` wirken ohne Neuinstallation, sobald Pages neu veröffentlicht hat.
 
 ## Nachrichtenwechsel
-Das Manifest fordert einen anheftbaren Bereich an (`SupportsPinning`). Dann meldet Outlook jeden Nachrichtenwechsel (`ItemChanged`) und der Bereich zeigt die neue Nachricht. Microsoft nennt Pinning für Outlook.com-Konten als nicht verfügbar; ob das neue Outlook den Wechsel trotzdem meldet, ist in der Plattform-Matrix dokumentiert. Ohne Meldung gilt: Der Bereich zeigt und bearbeitet immer die im Kopf genannte Nachricht – bei Bedarf neu öffnen.
+Das Manifest fordert einen anheftbaren Bereich an (`SupportsPinning`). Mit Microsoft-365-Konto meldet Outlook dann jeden Nachrichtenwechsel (`ItemChanged`) und der Bereich zeigt die neue Nachricht.
+**Outlook.com (Realtest 24.09.2026):** Das Manifest wird angenommen, aber Outlook meldet keinen Wechsel. Der Bereich bleibt offen und zeigt und bearbeitet weiter die Nachricht in seinem Kopf. Für eine andere Nachricht: Bereich schließen → Nachricht wählen → **Weitere Apps → Precision Workspace**.
