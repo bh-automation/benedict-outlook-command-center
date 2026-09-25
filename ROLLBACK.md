@@ -5,6 +5,8 @@
 2. Unter „Benutzerdefinierte Add-Ins“ bei **Precision Workspace** auf **…** → **Entfernen**.
 3. Der Eintrag „Precision Workspace“ unter **Apps** ist weg. Nachrichten, Ordner und Signatur bleiben unverändert.
 
+Getestet 24.09.2026: Entfernen ohne Rückfrage; danach „Keine Add-Ins gefunden“; Neuinstallation aus Datei funktioniert.
+
 ## Auf einen früheren Stand zurück
 - **Nur Code (`site/`):** im Repository den früheren Commit bzw. Tag wiederherstellen (Datei-Stand hochladen oder Revert) → Pages veröffentlicht automatisch neu.
 - **Manifest:** frühere `manifest.production.xml` aus dem Tag/Commit laden → Add-in entfernen → aus Datei neu installieren.

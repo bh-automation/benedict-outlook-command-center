@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.0 – Release-Kandidat (24.09.2026)
+## 1.0.0 – 24.09.2026
 ### Funktion
 - Aufgabenbereich „Precision Workspace“: Absender, Betreff, Kategorien der geöffneten Nachricht; 5 Status-Aktionen (ACTION, WAITING, PROJECT, DONE, REFERENCE), nur Kategorien
 - Ein Status pro Nachricht; erneuter Klick entfernt ihn; fachliche Kategorien bleiben unberührt
@@ -17,3 +17,6 @@
 - Validator prüft zusätzlich: V1_0/V1_1-Struktur, `SupportsPinning`, Mailbox 1.5, alle `resid` definiert, Menüband-URL = SourceLocation, nur `MessageReadCommandSurface`
 - E2E: 39 Prüfungen (u. a. Nachrichtenwechsel, Wettlauf beim Wechsel, Klick während Laden), Gegenproben ohne die Schutzmechanismen schlagen fehl
 - GitHub Pages über Actions, CodeQL, Dependabot, Actions auf Commit-SHA gepinnt
+
+### Bekannte Grenze
+- Outlook.com: kein Pinning → der Bereich folgt der Nachrichtenauswahl nicht; für eine andere Nachricht neu öffnen. Mit Microsoft-365-Konto greift `SupportsPinning`.
